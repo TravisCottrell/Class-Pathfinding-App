@@ -1,9 +1,16 @@
 import React, { Component } from "react";
-import Node from "./node/node";
+import Node from "./node/node.jsx";
+import "./navbar/navbar.css";
+//import Navbar from "./navbar/navbar.jsx";
+
+//pathing algorithms
 import { dijkstra, getShortestPath } from "../algorithms/pathFinding/dijkstra.js";
+import { AStar } from "../algorithms/pathFinding/AStar";
+
+//maze algorithms
 import { randomMaze } from "../algorithms/mazeGen/randomMaze";
 import { recursiveDivision, getOrientation } from "../algorithms/mazeGen/recursiveDivision";
-import { AStar } from "../algorithms/pathFinding/AStar";
+
 
 const gridWidth = 50;
 const gridHeight = 30;
@@ -20,12 +27,12 @@ class Pathing extends Component {
             mouseisDown: false
         };
         
-        this.handleMazeGen = this.handleMazeGen.bind(this);
-        this.handlePathFinding = this.handlePathFinding.bind(this);
+        //this.handleMazeGen = this.handleMazeGen.bind(this);
+        //this.handlePathFinding = this.handlePathFinding.bind(this);
     }
 
     componentDidMount() {
-        //build the grid with default parameters 
+        //build the initial grid with default parameters 
         const grid = [];
         for (let row = 0; row < gridWidth; row++) {
             const currentrow = [];
@@ -103,7 +110,23 @@ class Pathing extends Component {
         this.setState({mouseisDown: false});
     }
 
-    handlePathFinding(event){
+        //for the maze generation dopdown
+        handleMazeGen = (event) =>{
+            switch(event.target.value){
+                case 'randomMaze':
+                    randomMaze(this.state.grid);
+                break;
+    
+                case 'recursiveDivision':
+                    const orientation = getOrientation( gridHeight, gridWidth,);
+                    recursiveDivision(this.state.grid, 0, 0, gridHeight, gridWidth, orientation);  
+                break;
+            }
+            this.setState({});
+        }
+
+    //for the path finding dopdown
+    handlePathFinding = (event) =>{
         switch(event.target.value){
             case 'dijkstra':
                 this.handleDijkstra();
@@ -143,22 +166,6 @@ class Pathing extends Component {
         }
     }
 
-    handleMazeGen(event){
-        switch(event.target.value){
-            case 'randomMaze':
-                randomMaze(this.state.grid);
-            break;
-
-            case 'recursiveDivision':
-                const orientation = getOrientation( gridHeight, gridWidth,);
-                recursiveDivision(this.state.grid, 0, 0, gridHeight, gridWidth, orientation);  
-            break;
-        }
-        this.setState({});
-    }
-
-
-
     render() {
         const { grid, startSet, finishSet } = this.state;
         
@@ -166,21 +173,26 @@ class Pathing extends Component {
         return (
            
             <div>
-                {/* <button onClick={() => this.handleDijkstra()}>Start</button> */}
-                <form name="paths">
-                    <select value={this.state.path} onChange={this.handlePathFinding}>
-                        <option value="">path finding</option>
-                        <option value="dijkstra">dijkstra</option>
-                        <option value="astar">A Star</option>
-                    </select>
-                </form>
-                <form name="mazes">
-                    <select value={this.state.maze} onChange={this.handleMazeGen}>
-                        <option value="">maze generation</option>
-                        <option value="randomMaze">random maze</option>
-                        <option value="recursiveDivision">recursive division</option>
-                    </select>
-                </form>
+                <nav className="navbar">
+                    <div className="navmenu">
+                        <form name="paths" >
+                            {/* <input type="submit" value="start" className="button-start"/> */}
+                            <select className="nav-items" value={this.state.path} onChange={this.handlePathFinding}>
+                                <option value="">path finding</option>
+                                <option value="dijkstra">dijkstra</option>
+                                <option value="astar">A Star</option>
+                            </select>
+                        </form>
+                        <form name="mazes">
+                            <select className="nav-items" value={this.state.maze} onChange={this.handleMazeGen}>
+                                <option value="">maze generation</option>
+                                <option value="randomMaze">random maze</option>
+                                <option value="recursiveDivision">recursive division</option>
+                            </select>
+                        </form>
+                    </div>
+                </nav>
+
                 <div className="grid">
                     <div className="nodes">
                         {grid.map((row, rowindex) => {

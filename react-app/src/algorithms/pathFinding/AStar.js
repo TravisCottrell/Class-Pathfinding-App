@@ -1,4 +1,4 @@
-export function AStar(){
+export function AStar(start, end, grid){
     console.log("a*");
 }
 
@@ -19,6 +19,7 @@ export function AStar(){
 function getNeighbors(node, grid) {
     // prettier-ignore
     //loop to get the neighbors in the up/down/left/right positions of the current node
+    const neighbors = [];
     for (const i of [[0, -1],[0, 1],[-1, 0],[1, 0]]) {
         const neighborPosition = [node.row + i[0], node.col + i[1]];
 
@@ -27,9 +28,7 @@ function getNeighbors(node, grid) {
         
         const neighbor = grid[neighborPosition[1]][neighborPosition[0]];
         if(!neighbor.isWall && !neighbor.isVisited) {
-            //distance is the g score in this case
-            neighbor.distance = node.distance + 1;
-            
+            neighbor.push(neighbor); 
         }
     }
 }
