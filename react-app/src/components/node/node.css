@@ -9,6 +9,12 @@
     height: 1.5rem; 
   }
 
+/* .node:hover{
+  background-color: rgb(0, 0, 0);
+
+} */
+
+
   .visited{
     background-color: #c5853d;
   } 
@@ -31,8 +37,6 @@
       transform: scale(1.0);
       background-color: rgb(95, 95, 95);
     }
-  
-
   } */
 
   .path{
@@ -107,12 +111,8 @@
       
       background-color: rgb(255, 0, 43);
     }
-  
-
   }
 
-  
-  
   .nodes{
     display: flex;
     flex-direction: row;
