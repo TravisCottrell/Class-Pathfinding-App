@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/Pathfinding-App/static/css/main.f7316ced.css",
-    "main.js": "/Pathfinding-App/static/js/main.b8c6ea69.js",
+    "main.css": "/Pathfinding-App/static/css/main.f09a7d71.css",
+    "main.js": "/Pathfinding-App/static/js/main.5b3b0b02.js",
     "index.html": "/Pathfinding-App/index.html",
-    "main.f7316ced.css.map": "/Pathfinding-App/static/css/main.f7316ced.css.map",
-    "main.b8c6ea69.js.map": "/Pathfinding-App/static/js/main.b8c6ea69.js.map"
+    "main.f09a7d71.css.map": "/Pathfinding-App/static/css/main.f09a7d71.css.map",
+    "main.5b3b0b02.js.map": "/Pathfinding-App/static/js/main.5b3b0b02.js.map"
   },
   "entrypoints": [
-    "static/css/main.f7316ced.css",
-    "static/js/main.b8c6ea69.js"
+    "static/css/main.f09a7d71.css",
+    "static/js/main.5b3b0b02.js"
   ]
 }
