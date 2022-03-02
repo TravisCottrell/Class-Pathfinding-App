@@ -41,7 +41,7 @@ class Pathing extends Component {
             }
             grid.push(currentrow);
         }
-        this.setState({ grid });
+        this.setState({ grid: grid });
     }
 
     createNode(col, row) {
@@ -49,12 +49,12 @@ class Pathing extends Component {
             col,
             row,
             distance: Infinity,
+            Fscore: Infinity,
             prevNode: null,
             isStart: false,
             isFinish: false,
             isWall: false,
             isVisited: false,
-            isVisitedAnimate: false,
             pathAnimate: false,
         };
     }
@@ -127,25 +127,26 @@ class Pathing extends Component {
 
     //for the path finding dopdown
     handlePathFinding = (event) =>{
+        let vistedNodes;
+        let path;
         switch(event.target.value){
             case 'dijkstra':
-                this.handleDijkstra();
+                vistedNodes = dijkstra(this.state.startNode, this.state.finishNode, this.state.grid);
+                path = getShortestPath(this.state.finishNode);
             break;
 
             case 'astar':
-                AStar();
+                vistedNodes = AStar(this.state.startNode, this.state.finishNode, this.state.grid);
+                path = getShortestPath(this.state.finishNode);
             break;
         }
+        this.handleAnimate(vistedNodes, path)
     }
 
-    handleDijkstra() {
-        // prettier-ignore
-        const vistedNodes = dijkstra(this.state.startNode, this.state.finishNode, this.state.grid);
-        const path = getShortestPath(this.state.finishNode);
-
+    handleAnimate(vistedNodes, path){
         for (let i = 0; i < vistedNodes.length; i++) {
             setTimeout(() => {
-                vistedNodes[i].isVisitedAnimate = true;
+                vistedNodes[i].isVisited = true;
                 this.setState({});
             }, 20 * i);
 
@@ -166,17 +167,30 @@ class Pathing extends Component {
         }
     }
 
+    resetPaths = () => {
+        console.log("tst")
+    let newgrid = this.state.grid;
+    for (let row = 0; row < gridWidth; row++) {
+        for (let col = 0; col < gridHeight; col++) {
+            newgrid[row][col].distance = Infinity;
+            newgrid[row][col].Fscore = Infinity;
+            newgrid[row][col].prevNode = null;
+            newgrid[row][col].isVisited = false;
+            newgrid[row][col].pathAnimate = false;
+        }
+    }
+    this.setState({ grid: newgrid });
+    }
+
     render() {
         const { grid, startSet, finishSet } = this.state;
-        
-        
         return (
-           
             <div>
+
                 <nav className="navbar">
+                    
                     <div className="navmenu">
                         <form name="paths" >
-                            {/* <input type="submit" value="start" className="button-start"/> */}
                             <select className="nav-items" value={this.state.path} onChange={this.handlePathFinding}>
                                 <option value="">path finding</option>
                                 <option value="dijkstra">dijkstra</option>
@@ -191,6 +205,7 @@ class Pathing extends Component {
                             </select>
                         </form>
                     </div>
+                    <button className="button-start" onClick={this.resetPaths}>Reset algorithm</button>
                 </nav>
 
                 <div className="grid">
@@ -205,8 +220,8 @@ class Pathing extends Component {
                                             isStart,
                                             isFinish,
                                             isWall,
+                                            isOpen,
                                             isVisited,
-                                            isVisitedAnimate,
                                             pathAnimate,
                                         } = node;
                                         // prettier-ignore
@@ -220,8 +235,8 @@ class Pathing extends Component {
                                                 isStart={isStart}
                                                 isFinish={isFinish}
                                                 isWall={isWall}
+                                                isOpen={isOpen}
                                                 isVisited={isVisited}
-                                                isVisitedAnimate={isVisitedAnimate}
                                                 pathAnimate={pathAnimate}
                                                 mouseisDown={this.state.mouseisDown}
                                                 onMouseDown={(row,col,nodeClass) => this.handleMouseDown(row, col, nodeClass)}

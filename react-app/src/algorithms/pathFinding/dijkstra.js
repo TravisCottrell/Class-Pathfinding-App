@@ -2,7 +2,7 @@ export function dijkstra(start, end, grid) {
     let unvistedNodes = getNodes(grid);
     let vistedNodes = [];
     start.distance = 0;
-    start.isVisited = true;
+    //start.isVisited = true;
 
     while (unvistedNodes.length > 0) {
         sortNodes(unvistedNodes);
@@ -11,10 +11,23 @@ export function dijkstra(start, end, grid) {
         //this is used when there are no available paths 
         if(currentNode.distance === Infinity) return vistedNodes;
         
-        currentNode.isVisited = true;
         vistedNodes.push(currentNode);
         if (currentNode === end) return vistedNodes;
-        getNeighbors(currentNode, grid);
+
+        const neighbors = getNeighbors(currentNode, grid);
+        for(let neighbor of neighbors){
+
+            const inOpenList = vistedNodes.some((element) => {
+                if(element === neighbor){
+                    return true;
+                }
+            });
+            if(!inOpenList){
+                neighbor.distance = currentNode.distance + 1;
+                neighbor.prevNode = currentNode;
+            }
+        }
+
     }
 }
 
@@ -34,6 +47,7 @@ function sortNodes(unvisitedNodes) {
 }
 
 function getNeighbors(node, grid) {
+    const neighbors = [];
     // prettier-ignore
     //loop to get the neighbors in the up/down/left/right positions of the current node
     for (const i of [[0, -1],[0, 1],[-1, 0],[1, 0]]) {
@@ -43,11 +57,13 @@ function getNeighbors(node, grid) {
         if(neighborPosition[0] < 0 || neighborPosition[0] > grid[0].length-1 || neighborPosition[1] < 0 || neighborPosition[1] > grid.length-1){continue};
         
         const neighbor = grid[neighborPosition[1]][neighborPosition[0]];
-        if(!neighbor.isWall && !neighbor.isVisited) {
-            neighbor.distance = node.distance + 1;
-            neighbor.prevNode = node; 
+        if(!neighbor.isWall ) {
+            neighbors.push(neighbor);
+            // neighbor.distance = node.distance + 1;
+            // neighbor.prevNode = node; 
         }
     }
+    return neighbors;
 }
 
 //backtracks from the finish node with prevnodes until the start, which has null, is reached 

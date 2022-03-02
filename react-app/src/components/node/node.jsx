@@ -54,14 +54,15 @@ class Node extends Component {
 
 
     render() {
-        const visitedClass = this.props.isVisitedAnimate ? 'visited' : '';
+        const visitedClass = this.props.isVisited ? 'visited' : '';
         const pathClass = this.props.pathAnimate ? 'path' : '';
-        const nc = this.props.isWall ? 'wall' : '';
+        const wallClass = this.props.isWall ? 'wall' : '';
+        const openClass = this.props.isOpen ? 'open' : '';
         //console.log(this.props.isVisited);
         return (
             <div>
                 <div
-                    className={`node ${this.state.nodeClass} ${nc} ${visitedClass} ${pathClass}`}
+                    className={`node ${this.state.nodeClass} ${wallClass} ${visitedClass} ${pathClass} ${openClass}`}
                     id={`row-${this.props.row} col-${this.props.col}`}
                     onMouseDown={this.nodeClick}
                     onMouseEnter={this.nodeHold}

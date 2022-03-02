@@ -1,22 +1,35 @@
-export function AStar(){
-    console.log("a*");
+import { resetWarningCache } from "prop-types";
+
+export function AStar(start, end, grid){
+    let open_list = [];
+    let closed_list = [];
+    start.distance = 0;
+    open_list.push(start);
+    while(open_list){
+        sortNodes(open_list);
+        const current = open_list.pop();
+        closed_list.push(current);
+        if(current === undefined || current === end) return closed_list;
+
+        let neighbors = getNeighbors(current, grid);
+        for(let neighbor of neighbors){
+            const temp_distance = current.distance + 1;
+            if (temp_distance < neighbor.distance){
+                neighbor.prevNode = current;
+                neighbor.distance = temp_distance;
+                const Hscore = manhattan_distance(neighbor, end);
+                neighbor.Fscore = neighbor.distance + Hscore;
+                const inOpenList = open_list.some((element) => {if(element === neighbor)return true;});
+                if(!inOpenList) open_list.push(neighbor);
+            }
+        }
+    }
 }
 
-// function get_neighbors(self, grid){
-//     neighbors = []
-    
-//     for(i in [(0, -1), (0, 1), (-1, 0), (1, 0)]) {
-//         neighbor = (self.row + i[0], self.col + i[1])
-//         box = grid[neighbor[0]][neighbor[1]]
 
-//         if not box.is_wall(){
-//             neighbors.append(box)
-//         }
-//     }
-//     return neighbors
-// }
 
 function getNeighbors(node, grid) {
+    const neighbors = [];
     // prettier-ignore
     //loop to get the neighbors in the up/down/left/right positions of the current node
     for (const i of [[0, -1],[0, 1],[-1, 0],[1, 0]]) {
@@ -26,10 +39,19 @@ function getNeighbors(node, grid) {
         if(neighborPosition[0] < 0 || neighborPosition[0] > grid[0].length-1 || neighborPosition[1] < 0 || neighborPosition[1] > grid.length-1){continue};
         
         const neighbor = grid[neighborPosition[1]][neighborPosition[0]];
-        if(!neighbor.isWall && !neighbor.isVisited) {
-            //distance is the g score in this case
-            neighbor.distance = node.distance + 1;
+        if(!neighbor.isWall ) {
+            neighbors.push(neighbor);
             
         }
     }
+    return neighbors;
+}
+
+function manhattan_distance(node, end){
+    return Math.abs(end.row - node.row) + Math.abs(end.col - node.col);
+}
+
+//sorts the number in decending order so the lowest fscore can be popped
+function sortNodes(open_list) {
+    open_list.sort((a, b) => b.Fscore - a.Fscore);
 }
