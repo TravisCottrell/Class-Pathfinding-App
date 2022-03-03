@@ -1,4 +1,3 @@
-import { resetWarningCache } from "prop-types";
 
 export function AStar(start, end, grid){
     let open_list = [];
@@ -48,7 +47,11 @@ function getNeighbors(node, grid) {
 }
 
 function manhattan_distance(node, end){
-    return Math.abs(end.row - node.row) + Math.abs(end.col - node.col);
+    return Math.abs((end.row - node.row)) + Math.abs((end.col - node.col));
+}
+
+function euclidean_distance(node, end){
+    return Math.sqrt((end.row - node.row)**2 + (end.col - node.col)**2);
 }
 
 //sorts the number in decending order so the lowest fscore can be popped

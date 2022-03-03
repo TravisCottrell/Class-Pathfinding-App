@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Node from "./node/node.jsx";
-import "./navbar/navbar.css";
+import "./pathingApp.css";
 //import Navbar from "./navbar/navbar.jsx";
 
 //pathing algorithms
@@ -24,11 +24,9 @@ class Pathing extends Component {
             startNode: null,
             finishSet: false,
             finishNode: null,
-            mouseisDown: false
+            mouseisDown: false,
+            erase: false
         };
-        
-        //this.handleMazeGen = this.handleMazeGen.bind(this);
-        //this.handlePathFinding = this.handlePathFinding.bind(this);
     }
 
     componentDidMount() {
@@ -59,50 +57,101 @@ class Pathing extends Component {
         };
     }
 
-    handleMouseDown(row, col, nodeClass) {
-        if (nodeClass === "start") {
-            this.state.grid[col][row].isStart = true;
-            this.setState({
-                startSet: true,
-                startNode: this.state.grid[col][row],
-                grid: this.state.grid,
-            });
-        } else if (nodeClass === "finish") {
-            this.state.grid[col][row].isFinish = true;
-            this.setState({
-                finishSet: true,
-                finishNode: this.state.grid[col][row],
-                grid: this.state.grid,
-            });
-        } else if (nodeClass === "wall") {
-            this.state.grid[col][row].isWall = true;
-            this.setState({
-                grid: this.state.grid,
-            });
+    handleMouseDown(row, col) {
+        let currentNode = this.state.grid[col][row];
+        if(this.state.erase){
+            if (currentNode.isStart) {
+                this.state.grid[col][row].isStart = false;
+                this.setState({
+                    startSet: false,
+                    startNode: null,
+                    grid: this.state.grid,
+                });
+            } else if (currentNode.isFinish) {
+                this.state.grid[col][row].isFinish = false;
+                this.setState({
+                    finishSet: false,
+                    finishNode: null,
+                    grid: this.state.grid,
+                });
+            } else if (currentNode.isWall) {
+                this.state.grid[col][row].isWall = false;
+                this.setState({
+                    grid: this.state.grid,
+                });
+            }
+
+        }else{
+            if (!this.state.startSet) {
+                this.state.grid[col][row].isStart = true;
+                this.setState({
+                    startSet: true,
+                    startNode: this.state.grid[col][row],
+                    grid: this.state.grid,
+                });
+            } else if (!this.state.finishSet && !currentNode.isStart) {
+                this.state.grid[col][row].isFinish = true;
+                this.setState({
+                    finishSet: true,
+                    finishNode: this.state.grid[col][row],
+                    grid: this.state.grid,
+                });
+            } else if (!currentNode.isStart && !currentNode.isFinish) {
+                this.state.grid[col][row].isWall = true;
+                this.setState({
+                    grid: this.state.grid,
+                });
+            }
         }
         this.setState({mouseisDown: true});
     }
 
-    handleMouseEnter(row, col, nodeClass) {
-        if (nodeClass === "start") {
-            this.state.grid[col][row].isStart = true;
-            this.setState({
-                startSet: true,
-                startNode: this.state.grid[col][row],
-                grid: this.state.grid,
-            });
-        } else if (nodeClass === "finish") {
-            this.state.grid[col][row].isFinish = true;
-            this.setState({
-                finishSet: true,
-                finishNode: this.state.grid[col][row],
-                grid: this.state.grid,
-            });
-        } else if (nodeClass === "wall") {
-            this.state.grid[col][row].isWall = true;
-            this.setState({
-                grid: this.state.grid,
-            });
+    handleMouseEnter(row, col) {
+        if(this.state.mouseisDown){
+            let currentNode = this.state.grid[col][row];
+            if(this.state.erase){
+                if (currentNode.isStart) {
+                    this.state.grid[col][row].isStart = false;
+                    this.setState({
+                        startSet: false,
+                        startNode: null,
+                        grid: this.state.grid,
+                    });
+                } else if (currentNode.isFinish) {
+                    this.state.grid[col][row].isFinish = false;
+                    this.setState({
+                        finishSet: false,
+                        finishNode: null,
+                        grid: this.state.grid,
+                    });
+                } else if (currentNode.isWall) {
+                    this.state.grid[col][row].isWall = false;
+                    this.setState({
+                        grid: this.state.grid,
+                    });
+                }
+            }else{
+                if (!this.state.startSet) {
+                    this.state.grid[col][row].isStart = true;
+                    this.setState({
+                        startSet: true,
+                        startNode: this.state.grid[col][row],
+                        grid: this.state.grid,
+                    });
+                } else if (!this.state.finishSet && !currentNode.isStart) {
+                    this.state.grid[col][row].isFinish = true;
+                    this.setState({
+                        finishSet: true,
+                        finishNode: this.state.grid[col][row],
+                        grid: this.state.grid,
+                    });
+                } else if (!currentNode.isStart && !currentNode.isFinish) {
+                    this.state.grid[col][row].isWall = true;
+                    this.setState({
+                        grid: this.state.grid,
+                    });
+                }
+            }
         }
     }
 
@@ -167,19 +216,22 @@ class Pathing extends Component {
         }
     }
 
-    resetPaths = () => {
-        console.log("tst")
-    let newgrid = this.state.grid;
-    for (let row = 0; row < gridWidth; row++) {
-        for (let col = 0; col < gridHeight; col++) {
-            newgrid[row][col].distance = Infinity;
-            newgrid[row][col].Fscore = Infinity;
-            newgrid[row][col].prevNode = null;
-            newgrid[row][col].isVisited = false;
-            newgrid[row][col].pathAnimate = false;
-        }
+    handleErase = (event) =>{
+        this.setState({erase: !this.state.erase});
     }
-    this.setState({ grid: newgrid });
+
+    resetPaths = () => {
+        let newgrid = this.state.grid;
+        for (let row = 0; row < gridWidth; row++) {
+            for (let col = 0; col < gridHeight; col++) {
+                newgrid[row][col].distance = Infinity;
+                newgrid[row][col].Fscore = Infinity;
+                newgrid[row][col].prevNode = null;
+                newgrid[row][col].isVisited = false;
+                newgrid[row][col].pathAnimate = false;
+            }
+        }
+        this.setState({ grid: newgrid });
     }
 
     render() {
@@ -208,6 +260,15 @@ class Pathing extends Component {
                     <button className="button-start" onClick={this.resetPaths}>Reset algorithm</button>
                 </nav>
 
+               
+                    
+                    <label className="switch">
+                        <p>erase</p>
+                        <input onChange={this.handleErase} type="checkbox"></input>
+                        <span className="slider round"></span>
+                        
+                    </label>
+                    
                 <div className="grid">
                     <div className="nodes">
                         {grid.map((row, rowindex) => {
@@ -239,8 +300,9 @@ class Pathing extends Component {
                                                 isVisited={isVisited}
                                                 pathAnimate={pathAnimate}
                                                 mouseisDown={this.state.mouseisDown}
-                                                onMouseDown={(row,col,nodeClass) => this.handleMouseDown(row, col, nodeClass)}
-                                                onMouseEnter={(row,col,nodeClass) => this.handleMouseEnter(row, col, nodeClass)}
+                                                erase={this.state.erase}
+                                                onMouseDown={(row,col) => this.handleMouseDown(row, col )}
+                                                onMouseEnter={(row,col) => this.handleMouseEnter(row, col)}
                                                 onMouseUp={() => this.handleMouseUp()}
                                             ></Node>
                                         );
