@@ -10,7 +10,7 @@ class Node extends Component {
         const openClass = this.props.isOpen ? 'open' : '';
         const startClass = this.props.isStart ? 'start' : '';
         const finishClass = this.props.isFinish ? 'finish' : '';
-        //console.log(this.props.isVisited);
+
         return (
             <div>
                 <div

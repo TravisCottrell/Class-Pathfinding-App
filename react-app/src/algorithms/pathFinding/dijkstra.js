@@ -74,5 +74,7 @@ export function getShortestPath(endNode){
         path.push(currentNode);
         currentNode = currentNode.prevNode;
     }
+    path.pop();
+    path.shift();
     return path;
 }

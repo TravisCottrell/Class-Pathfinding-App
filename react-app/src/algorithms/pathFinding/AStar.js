@@ -5,8 +5,9 @@ export function AStar(start, end, grid){
     start.distance = 0;
     open_list.push(start);
     while(open_list){
-        sortNodes(open_list);
-        const current = open_list.pop();
+        // sortNodes(open_list);
+        // const current = open_list.pop();
+        const current = getNearestNode(open_list)
         closed_list.push(current);
         if(current === undefined || current === end) return closed_list;
 
@@ -16,8 +17,9 @@ export function AStar(start, end, grid){
             if (temp_distance < neighbor.distance){
                 neighbor.prevNode = current;
                 neighbor.distance = temp_distance;
-                const Hscore = manhattan_distance(neighbor, end);
-                neighbor.Fscore = neighbor.distance + Hscore;
+                neighbor.Hscore = manhattan_distance(neighbor, end);
+                //neighbor.Hscore = euclidean_distance(neighbor, end);
+                neighbor.Fscore = neighbor.distance + neighbor.Hscore;
                 const inOpenList = open_list.some((element) => {if(element === neighbor)return true;});
                 if(!inOpenList) open_list.push(neighbor);
             }
@@ -54,7 +56,41 @@ function euclidean_distance(node, end){
     return Math.sqrt((end.row - node.row)**2 + (end.col - node.col)**2);
 }
 
+function getNearestNode(open_list){
+    let currentNearest; 
+    let index;
+    for(let i = 0; i < open_list.length;i++){
+        if(!currentNearest || open_list[i].Fscore < currentNearest.Fscore ){
+            currentNearest = open_list[i]
+            index = i;
+        }else if(open_list[i].Fscore === currentNearest.Fscore ){
+            if(open_list[i].Hscore < currentNearest.Hscore ){
+                currentNearest = open_list[i]
+                index = i;
+            }
+        }
+    }
+    open_list.splice(index, 1);
+    return currentNearest;
+}
 //sorts the number in decending order so the lowest fscore can be popped
 function sortNodes(open_list) {
-    open_list.sort((a, b) => b.Fscore - a.Fscore);
+    open_list.sort((a, b) => {
+        //b.Fscore - a.Fscore
+        if(b.Fscore < a.Fscore){
+            
+            return -1;
+        }else if(b.Fscore === a.Fscore){
+            if(b.Hscore > a.Fscore)return -1;
+        }else{
+            return 1;
+        }
+       
+        // else{
+        //     if(b.Hscore < a.Hscore){
+            
+        //         return 1;
+        //     }
+        // }
+    });
 }

@@ -47,6 +47,7 @@ class Pathing extends Component {
             col,
             row,
             distance: Infinity,
+            Hscore: Infinity,
             Fscore: Infinity,
             prevNode: null,
             isStart: false,
